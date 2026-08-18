@@ -98,9 +98,6 @@
   .diagram-title { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 14px; }
 
   /* ── TIMING BAR ── */
-  .timing-row { display: flex; align-items: center; margin: 6px 0; font-size: 13px; font-family: monospace; }
-  .timing-label { width: 80px; color: var(--muted); flex-shrink: 0; }
-  .timing-bar { height: 26px; display: flex; align-items: center; justify-content: center; border-radius: 4px; font-size: 12px; font-weight: 600; margin-right: 4px; color: #fff; }
   .t-act  { background: #1f6feb; }
   .t-cas  { background: #388bfd; }
   .t-pre  { background: #f78166; }
@@ -190,6 +187,15 @@
 
 .diagram img { max-width: 100%; height: auto; display: block; margin: 10px auto 0; }
 .fig-cap { font-size: 13px; color: #555; margin-top: 8px; text-align: left; line-height: 1.6; }
+
+.tg { display: grid; align-items: center; row-gap: 4px; font-family: monospace; }
+.tg-label { color: var(--muted); font-size: 11px; text-align: right; padding-right: 10px; }
+.tg-cell { height: 26px; display: flex; align-items: center; justify-content: center;
+           border-radius: 3px; color: #fff; font-weight: 600; font-size: 11px;
+           overflow: hidden; white-space: nowrap; margin-right: 1px; }
+.t-blank { background: transparent; color: var(--muted); font-weight: 400; }
+.tg-gap { height: 10px; grid-column: 1 / -1; }
+.tg-note { font-size: 12.5px; color: var(--muted); line-height: 1.7; margin: 8px 0 0 6px; }
 </style>
 </head>
 <body>
@@ -762,120 +768,102 @@
 <section id="s4-seq">
 <h3>完整時序圖：ACT → CAS → PRE → ACT（換 Row）</h3>
 
-<!-- ── Diagram A: Row HIT ── -->
+<p style="font-size:13px;color:var(--muted);margin:4px 0 14px">
+以下三張圖的橫軸是 HBM 時脈週期（900 MHz），<strong>每一格 = 1 個 cycle</strong>，
+同一張圖的各列共用同一條時間軸，因此上下對齊即代表同一時刻發生。
+</p>
+
 <h4 style="margin-top:22px">Case A &nbsp;Row HIT（同一 Row，連續 Pipeline 讀）</h4>
 <div class="diagram" style="overflow-x:auto">
-<div style="min-width:520px;padding:6px 2px">
-
-  <div class="timing-row">
-    <div class="timing-label">CMD</div>
-    <div class="timing-bar t-act"  style="width:30px">ACT</div>
-    <div class="timing-bar t-idle" style="width:112px;font-size:11px">tRCDRD &nbsp;13C</div>
-    <div class="timing-bar t-cas"  style="width:28px">CAS</div>
-    <div class="timing-bar t-idle" style="width:20px;font-size:11px">2C</div>
-    <div class="timing-bar t-cas"  style="width:28px">CAS</div>
-    <div class="timing-bar t-idle" style="width:20px;font-size:11px">2C</div>
-    <div class="timing-bar t-cas"  style="width:28px">CAS</div>
-    <div class="timing-bar t-idle" style="width:60px"></div>
-  </div>
-
-  <div class="timing-row">
-    <div class="timing-label">DATA</div>
-    <div class="timing-bar t-idle" style="width:198px;font-size:11px;letter-spacing:-.3px">← ACT+tRCDRD+tCL（23C）→</div>
-    <div class="timing-bar t-data" style="width:28px">D0</div>
-    <div class="timing-bar t-idle" style="width:20px;font-size:11px">2C</div>
-    <div class="timing-bar t-data" style="width:28px">D1</div>
-    <div class="timing-bar t-idle" style="width:20px;font-size:11px">2C</div>
-    <div class="timing-bar t-data" style="width:28px">D2</div>
-  </div>
-
-  <div style="margin-top:8px;padding-left:84px;font-size:12px;color:var(--muted)">
-    <strong style="color:var(--accent2)">First Latency ≈ 54 CLK</strong>（AR 發出到第一個 RLAST）&emsp;
-    <strong style="color:var(--accent2)">每次 gap = 2 CLK</strong>（Row 已 open，直接 CAS）
-  </div>
+<div class="tg" style="min-width:760px;grid-template-columns:78px repeat(26,1fr)">
+  <div class="tg-label">CMD</div>
+  <div class="tg-cell t-act" style="grid-column:2/span 1">ACT</div>
+  <div class="tg-cell t-idle" style="grid-column:3/span 12">tRCDRD = 13 CLK</div>
+  <div class="tg-cell t-cas" style="grid-column:15/span 1">CAS</div>
+  <div class="tg-cell t-idle" style="grid-column:16/span 1">2</div>
+  <div class="tg-cell t-cas" style="grid-column:17/span 1">CAS</div>
+  <div class="tg-cell t-idle" style="grid-column:18/span 1">2</div>
+  <div class="tg-cell t-cas" style="grid-column:19/span 1">CAS</div>
+  <div class="tg-cell t-blank" style="grid-column:20/span 8"></div>
+  <div class="tg-label">DATA</div>
+  <div class="tg-cell t-idle" style="grid-column:2/span 20">tRCDRD + tCL = 20 CLK</div>
+  <div class="tg-cell t-data" style="grid-column:22/span 1">D0</div>
+  <div class="tg-cell t-idle" style="grid-column:23/span 1">2</div>
+  <div class="tg-cell t-data" style="grid-column:24/span 1">D1</div>
+  <div class="tg-cell t-idle" style="grid-column:25/span 1">2</div>
+  <div class="tg-cell t-data" style="grid-column:26/span 1">D2</div>
+  <div class="tg-cell t-blank" style="grid-column:27/span 1"></div>
 </div>
 </div>
+<div class="tg-note">
+ACT 之後等 <code>tRCDRD</code> = 13 CLK 才能下第一個 CAS；資料再經 <code>tCL</code> = 7 CLK 出現，
+所以 <strong>ACT 到第一筆資料共 20 個 HBM CLK</strong>。之後 Row 保持 open，
+每個 CAS 只隔 <strong>2 CLK</strong>，資料連續吐出。
+<br>AXI 側量到的 First Latency 會比 20 CLK 大得多（約 54 個 AXI CLK），
+因為那還包含 AXI 介面、HBM Switch 路由與跨時脈域的往返，圖中只畫 DRAM 本身的時序。
+</div>
 
-<!-- ── Diagram B: Row MISS ── -->
-<h4 style="margin-top:22px">Case B &nbsp;Row MISS（換 Row，額外 26 CLK 代價）</h4>
+<h4 style="margin-top:26px">Case B &nbsp;Row MISS（換 Row 的代價）</h4>
 <div class="diagram" style="overflow-x:auto">
-<div style="min-width:620px;padding:6px 2px">
-
-  <div class="timing-row">
-    <div class="timing-label">CMD</div>
-    <div class="timing-bar t-act"  style="width:30px">ACT</div>
-    <div class="timing-bar t-idle" style="width:112px;font-size:11px">tRCDRD &nbsp;13C</div>
-    <div class="timing-bar t-cas"  style="width:36px;font-size:11px">CAS R0</div>
-    <div class="timing-bar t-pre"  style="width:30px">PRE</div>
-    <div class="timing-bar t-idle" style="width:112px;font-size:11px">tRP &nbsp;13C</div>
-    <div class="timing-bar t-act"  style="width:30px">ACT</div>
-    <div class="timing-bar t-idle" style="width:112px;font-size:11px">tRCDRD &nbsp;13C</div>
-    <div class="timing-bar t-cas"  style="width:36px;font-size:11px">CAS R1</div>
-  </div>
-
-  <div class="timing-row">
-    <div class="timing-label" style="font-size:11px">Row Buf</div>
-    <div class="timing-bar t-idle"  style="width:30px"></div>
-    <div class="timing-bar t-act"   style="width:112px;font-size:11px">R0 Sensing…</div>
-    <div class="timing-bar t-data"  style="width:36px;font-size:10px">R0 OPEN</div>
-    <div class="timing-bar t-idle"  style="width:30px"></div>
-    <div class="timing-bar t-pre"   style="width:112px;font-size:11px">Precharge…</div>
-    <div class="timing-bar t-idle"  style="width:30px"></div>
-    <div class="timing-bar t-act"   style="width:112px;font-size:11px">R1 Sensing…</div>
-    <div class="timing-bar t-data"  style="width:36px;font-size:10px">R1 OPEN</div>
-  </div>
-
-  <div style="margin-top:8px;padding-left:84px;font-size:12px;color:var(--muted)">
-    Row switch penalty = <strong style="color:var(--accent3)">PRE + tRP + tRCDRD ≈ 26 CLK ≈ 57.8 ns</strong>
-    &emsp;（啟用 Look Ahead PRE/ACT 後，實際代價會低於理論和）
-  </div>
+<div class="tg" style="min-width:880px;grid-template-columns:78px repeat(43,1fr)">
+  <div class="tg-label">CMD</div>
+  <div class="tg-cell t-act" style="grid-column:2/span 1">ACT</div>
+  <div class="tg-cell t-idle" style="grid-column:3/span 12">tRCDRD = 13</div>
+  <div class="tg-cell t-cas" style="grid-column:15/span 1">CAS R0</div>
+  <div class="tg-cell t-pre" style="grid-column:16/span 1">PRE</div>
+  <div class="tg-cell t-idle" style="grid-column:17/span 13">tRP = 13 CLK</div>
+  <div class="tg-cell t-act" style="grid-column:30/span 1">ACT</div>
+  <div class="tg-cell t-idle" style="grid-column:31/span 12">tRCDRD = 13</div>
+  <div class="tg-cell t-cas" style="grid-column:43/span 1">CAS R1</div>
+  <div class="tg-cell t-blank" style="grid-column:44/span 1"></div>
+  <div class="tg-label">Row Buf</div>
+  <div class="tg-cell t-blank" style="grid-column:2/span 1"></div>
+  <div class="tg-cell t-act" style="grid-column:3/span 12">Row 0 Sensing</div>
+  <div class="tg-cell t-data" style="grid-column:15/span 1">OPEN</div>
+  <div class="tg-cell t-pre" style="grid-column:16/span 14">Precharge</div>
+  <div class="tg-cell t-blank" style="grid-column:30/span 1"></div>
+  <div class="tg-cell t-act" style="grid-column:31/span 12">Row 1 Sensing</div>
+  <div class="tg-cell t-data" style="grid-column:43/span 1">OPEN</div>
+  <div class="tg-cell t-blank" style="grid-column:44/span 1"></div>
 </div>
 </div>
+<div class="tg-note">
+要讀另一個 Row，必須先 <code>PRE</code> 關掉目前這個（等 <code>tRP</code> = 13 CLK 把 Bit Line 充回 Vdd/2），
+再 <code>ACT</code> 打開新的（等 <code>tRCDRD</code> = 13 CLK）。
+<strong>Row switch 代價 = tRP + tRCDRD ≈ 26 HBM CLK ≈ 13 AXI CLK ≈ 28 ns</strong>，
+相對於 Row HIT 的 2 CLK 高出一個數量級。啟用 Look Ahead PRE/ACT 後實際代價會低於這個理論和（見 Case C）。
+</div>
 
-<!-- ── Diagram C: Look Ahead asymmetric gap ── -->
-<h4 style="margin-top:22px">Case C &nbsp;Look Ahead PRE/ACT（非對稱 gap 的原因）</h4>
+<h4 style="margin-top:26px">Case C &nbsp;Look Ahead PRE/ACT（非對稱 gap 的成因）</h4>
 <p style="font-size:13px;color:var(--muted);margin:4px 0 10px">
-  交替讀取 Row0 / Row1 時，MC 在送出資料的同時，於背景執行下一個 Row 的 PRE+ACT。
+在兩個 Row 之間交替讀取時，MC 會趁著送出資料的空檔，在背景先把下一個 Row 的 PRE 與 ACT 做掉。
+結果是<strong>同樣是換 Row，兩個方向的 gap 差很多</strong>：
 </p>
 <div class="diagram" style="overflow-x:auto">
-<div style="min-width:500px;padding:6px 2px">
-
-  <div style="font-size:11px;color:var(--muted);padding-left:90px;margin-bottom:3px">時間軸 →</div>
-
-  <!-- Direction: R0 → R1 -->
-  <div class="timing-row">
-    <div class="timing-label" style="font-size:11px;width:88px">R0 → R1</div>
-    <div class="timing-bar t-data" style="width:50px;font-size:11px">CAS R0</div>
-    <div class="timing-bar t-idle" style="width:160px;font-size:11px">← gap = 16 CLK →</div>
-    <div class="timing-bar t-data" style="width:50px;font-size:11px">CAS R1</div>
-  </div>
-  <!-- Look Ahead background ops during R0 data -->
-  <div class="timing-row" style="margin-top:2px">
-    <div class="timing-label" style="font-size:10px;color:var(--muted);width:88px">Look Ahead</div>
-    <div class="timing-bar t-idle" style="width:54px"></div>
-    <div class="timing-bar t-pre"  style="width:72px;font-size:10px">PRE R0</div>
-    <div class="timing-bar t-act"  style="width:72px;font-size:10px">ACT R1</div>
-    <div class="timing-bar t-idle" style="width:60px"></div>
-  </div>
-
-  <div style="height:14px"></div>
-
-  <!-- Direction: R1 → R0 -->
-  <div class="timing-row">
-    <div class="timing-label" style="font-size:11px;width:88px">R1 → R0</div>
-    <div class="timing-bar t-data"  style="width:50px;font-size:11px">CAS R1</div>
-    <div class="timing-bar t-idle"  style="width:16px;font-size:10px">1C</div>
-    <div class="timing-bar t-data"  style="width:50px;font-size:11px">CAS R0</div>
-    <div class="timing-bar t-idle"  style="width:140px;font-size:11px;color:var(--accent2)">R0 已由 Look Ahead 備好 ✓</div>
-  </div>
-
-  <div style="margin-top:10px;padding-left:92px;font-size:12px;color:var(--muted)">
-    <strong style="color:var(--warn)">R0→R1 gap = 16 CLK</strong>（Look Ahead 做 PRE R0 + ACT R1，net overlap 後仍需等待）&emsp;
-    <strong style="color:var(--accent2)">R1→R0 gap = 1 CLK</strong>（ACT R0 已備好，幾乎免等）
-  </div>
+<div class="tg" style="min-width:700px;grid-template-columns:88px repeat(20,1fr)">
+  <div class="tg-label">R0 → R1</div>
+  <div class="tg-cell t-data" style="grid-column:2/span 1">CAS R0</div>
+  <div class="tg-cell t-idle" style="grid-column:3/span 16">gap = 16 CLK</div>
+  <div class="tg-cell t-data" style="grid-column:19/span 1">CAS R1</div>
+  <div class="tg-cell t-blank" style="grid-column:20/span 2"></div>
+  <div class="tg-label">Look Ahead</div>
+  <div class="tg-cell t-blank" style="grid-column:2/span 1"></div>
+  <div class="tg-cell t-pre" style="grid-column:3/span 13">PRE Row 0</div>
+  <div class="tg-cell t-act" style="grid-column:16/span 3">ACT Row 1</div>
+  <div class="tg-cell t-blank" style="grid-column:19/span 3"></div>
+<div class="tg-gap"></div>
+  <div class="tg-label">R1 → R0</div>
+  <div class="tg-cell t-data" style="grid-column:2/span 1">CAS R1</div>
+  <div class="tg-cell t-idle" style="grid-column:3/span 1">1</div>
+  <div class="tg-cell t-data" style="grid-column:4/span 1">CAS R0</div>
+  <div class="tg-cell t-blank" style="grid-column:5/span 17">Row 0 已由 Look Ahead 備妥，幾乎免等</div>
 </div>
 </div>
-
+<div class="tg-note">
+第一次由 Row 0 換到 Row 1 時，Look Ahead 才剛開始做 PRE/ACT，仍要等 <strong>16 CLK</strong>；
+但這個動作順便把 Row 0 重新備妥，所以下一次換回 Row 0 時只需 <strong>1 CLK</strong>。
+這就是交替存取時 gap 呈現一長一短的原因——它不是量測誤差，而是 Look Ahead 機制的直接結果。
+</div>
 </section>
 </section>
 
