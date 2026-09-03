@@ -714,7 +714,7 @@
     +ΔV → Bit Line 打到 Vdd（= 邏輯 1）
     -ΔV → Bit Line 打到 GND（= 邏輯 0）
 
-  ⚠️  放大過程中，電容的原始電荷已經被拉走或注入
+  注意：放大過程中，電容的原始電荷已經被拉走或注入
        電容裡的值 = 已損壞（unstable）
 
   Sense Amplifier 放大完後：
@@ -1150,7 +1150,7 @@ AXI 介面、HBM Switch 路由與跨時脈域的往返；本圖只畫 DRAM 本�
 
     <div class="setting-row">
       <div class="setting-name">Enable Switch 0 / Global Addressing Stack 0</div>
-      <div class="setting-val">✅ 勾選</div>
+      <div class="setting-val">&#10003; 勾選</div>
       <div class="setting-desc">開啟 HBM Switch（Crossbar）。<strong>必須勾選</strong>才能讓多個 SAXI port 存取不同 PC。不勾時每個 AXI port 只能打對應的 PC，addr 直接到 MC，沒有路由功能。</div>
     </div>
 
@@ -1180,7 +1180,7 @@ AXI 介面、HBM Switch 路由與跨時脈域的往返；本圖只畫 DRAM 本�
 
     <div class="setting-row">
       <div class="setting-name">Enable External APB Interface</div>
-      <div class="setting-val">✅ 勾選</div>
+      <div class="setting-val">&#10003; 勾選</div>
       <div class="setting-desc">讓 APB 介面引出來給 FPGA 邏輯使用。可以讀取 HBM 溫度、監控 ECC 錯誤。不勾時 APB 被 IP 內部處理掉。</div>
     </div>
 
@@ -1280,13 +1280,13 @@ AXI 介面、HBM Switch 路由與跨時脈域的往返；本圖只畫 DRAM 本�
 
     <div class="setting-row">
       <div class="setting-name">Enable Request Reordering</div>
-      <div class="setting-val">✅ 勾選</div>
+      <div class="setting-val">&#10003; 勾選</div>
       <div class="setting-desc">允許 MC 對 pending 的 AR/AW 請求重新排序，目的是減少 Row Switch 次數。當有多個請求在等待，MC 會優先處理和目前 open row 相同的請求（Row HIT 優先）。</div>
     </div>
 
     <div class="setting-row">
       <div class="setting-name">Enable Coherency in Reordering</div>
-      <div class="setting-val">✅ 勾選</div>
+      <div class="setting-val">&#10003; 勾選</div>
       <div class="setting-desc">在 reorder 時維護資料一致性。如果有 Write 後 Read 到同地址的情況，不允許 Read 跑到 Write 前面。這個選項限制了 reorder 的自由度（安全但效能略降）。</div>
     </div>
 
@@ -1304,13 +1304,13 @@ AXI 介面、HBM Switch 路由與跨時脈域的往返；本圖只畫 DRAM 本�
 
     <div class="setting-row">
       <div class="setting-name">Enable Look Ahead Pre-Charge</div>
-      <div class="setting-val">✅ 勾選</div>
+      <div class="setting-val">&#10003; 勾選</div>
       <div class="setting-desc">Look Ahead Pre-Charge：MC 預測下一個請求需要換 Row 時，在當前 CAS 資料送出的同時，提前啟動 PRE。這樣 PRE 的時間可以和資料傳輸 overlap，減少等待。<br><em>回頭存取先前剛關閉的 Row 時，代價會明顯低於一般的 row switch。</em></div>
     </div>
 
     <div class="setting-row">
       <div class="setting-name">Enable Look Ahead Activate</div>
-      <div class="setting-val">✅ 勾選</div>
+      <div class="setting-val">&#10003; 勾選</div>
       <div class="setting-desc">Look Ahead Activate：在 PRE 完成前，提前發出下一個 ACT（overlap PRE 和 ACT 的時間）。配合 Look Ahead Pre-Charge，讓 Row Switch 的死亡時間最小化。<br><em>實際代價因此低於 tRP + tRCDRD 的理論和。</em></div>
     </div>
 
@@ -1530,7 +1530,7 @@ AXI 介面、HBM Switch 路由與跨時脈域的往返；本圖只畫 DRAM 本�
 <pre>
   情況 A：AR 正好在 Refresh 空窗期發出（最幸運）
 
-  AR ──→  [ACT 54 CLK] ──→ [R 資料] ← First Latency = 54 CLK ✅
+  AR ──→  [ACT 54 CLK] ──→ [R 資料] ← First Latency = 54 CLK ✓
 
   ─────────────────────────────────────────────────────────────────
   情況 B：AR 在 Refresh 開始後才到達（最倒楣）
@@ -1769,20 +1769,20 @@ AXI 介面、HBM Switch 路由與跨時脈域的往返；本圖只畫 DRAM 本�
 
 <div class="diagram">
 <pre>
-  ✅ 對齊存取（addr[4:0] = 5'b00000）：
+  ✓ 對齊存取（addr[4:0] = 5'b00000）：
   ┌────────────────────────────────────────────────────────┐
   │ ARADDR = 0x0_0090_0000  → 1 個 HBM Read 命令           │
   │                         → 100% 有效頻寬                │
   └────────────────────────────────────────────────────────┘
 
-  ❌ 未對齊 Read（addr[4:0] ≠ 0）：
+  ✗ 未對齊 Read（addr[4:0] ≠ 0）：
   ┌────────────────────────────────────────────────────────┐
   │ ARADDR = 0x0_0090_0010  → 2 個 HBM Read 命令           │
   │                         → MC 合併資料送回 AXI          │
   │                         → 有效頻寬 ≤ 50%               │
   └────────────────────────────────────────────────────────┘
 
-  ❌❌ 未對齊 Write + ECC 開啟（最壞情況）：
+  ✗✗ 未對齊 Write + ECC 開啟（最壞情況）：
   ┌────────────────────────────────────────────────────────┐
   │ → 2 次 Read-Modify-Write (RMW) 操作                    │
   │   ① Read 第一個 32-byte chunk（含要修改的部分）        │
@@ -1799,7 +1799,7 @@ AXI 介面、HBM Switch 路由與跨時脈域的往返；本圖只畫 DRAM 本�
 
 <table>
   <tr><th>實際寫入大小</th><th>WSTRB</th><th>有效頻寬</th><th>建議</th></tr>
-  <tr><td>32 bytes（全）</td><td><code>FFFF_FFFF</code></td><td class="badge-ok">100%</td><td>✅ 最佳，保持此寬度</td></tr>
+  <tr><td>32 bytes（全）</td><td><code>FFFF_FFFF</code></td><td class="badge-ok">100%</td><td>✓ 最佳，保持此寬度</td></tr>
   <tr><td>16 bytes</td><td><code>0000_FFFF</code></td><td class="badge-warn">50%</td><td>若能合併，應合併為 32B</td></tr>
   <tr><td>8 bytes</td><td><code>0000_00FF</code></td><td class="badge-bad">25%</td><td class="badge-bad">嚴重低效，應避免</td></tr>
   <tr><td>1 byte</td><td><code>0000_0001</code></td><td class="badge-bad">3.1%</td><td class="badge-bad">極端低效，禁止</td></tr>
@@ -1815,15 +1815,15 @@ AXI 介面、HBM Switch 路由與跨時脈域的往返；本圖只畫 DRAM 本�
 
 <div class="diagram">
 <pre>
-  ✅ 高效模式（最小化 bus turnaround）：
+  ✓ 高效模式（最小化 bus turnaround）：
   ─── [WRITE × N bursts] ──── [turnaround] ──── [READ × M bursts] ───
       N, M 越大，turnaround 開銷佔比越小（被稀釋）
 
-  ❌ 低效模式（頻繁切換）：
+  ✗ 低效模式（頻繁切換）：
   ─── [W1]─[turn]─[R1]─[turn]─[W2]─[turn]─[R2]─[turn]─[W3] ───
       每次切換都浪費數個 CLK，實際利用率大幅下降
 
-  ✅ 高效模式（把 Write 與 Read 分成不同階段）：
+  ✓ 高效模式（把 Write 與 Read 分成不同階段）：
   Phase 1: ─── [W1]─[W2]─[W3]─[W4] ─── (純 Write)
   Phase 2: ─── [R1]─[R2]─[R3]─[R4] ─── (純 Read)
   兩個 phase 不交疊，bus turnaround 整段只發生一次
