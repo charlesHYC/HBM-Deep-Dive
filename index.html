@@ -281,6 +281,73 @@
   .tg-gap { height: 10px; grid-column: 1 / -1; }
   .tg-note { font-size: 12.5px; color: var(--muted); line-height: 1.7; margin: 8px 0 0 6px; }
 
+  #sidebar .lang-switch {
+    padding: 8px 22px 10px; border-bottom: 1px solid var(--border);
+    font-size: 12.5px; color: var(--faint);
+  }
+  #sidebar .lang-switch a { color: var(--muted); text-decoration: none; border-bottom: 1px solid var(--border); }
+  #sidebar .lang-switch a:hover { color: var(--text); border-bottom-color: var(--rule); }
+
+  /* ── 3D STACK FIGURE (scoped to the one figure) ───────────── */
+  .stack-fig { font-size: 14px; }
+  .stack-fig .stack-die {
+    border: 1.5px solid var(--rule); border-radius: 3px;
+    background: var(--bg); padding: 13px 16px;
+  }
+  .stack-fig .die-label {
+    font-size: 12px; font-weight: 700; letter-spacing: 1.3px;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 10px;
+  }
+  .stack-fig .die-row { display: flex; gap: 10px; }
+  .stack-fig .die-cell {
+    flex: 1; text-align: center; padding: 10px; font-size: 14.5px; font-weight: 600;
+    border: 1px solid var(--rule); border-radius: 2px; color: var(--text);
+  }
+  /* Two tones only, and they carry meaning: storage vs. sense amplifier. */
+  .stack-fig .die-cell.cells { background: #ffffff; }
+  .stack-fig .die-cell.sa    { background: #e2e2e2; }
+
+  /* TSV drawn as a real spine running through the stack. */
+  .stack-fig .tsv {
+    position: relative; height: 30px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .stack-fig .tsv::before {
+    content: ''; position: absolute; top: 0; bottom: 0; left: 50%;
+    border-left: 2px dashed var(--rule); transform: translateX(-1px);
+  }
+  .stack-fig .tsv span {
+    position: relative; background: var(--bg2); padding: 2px 12px;
+    font-size: 12px; letter-spacing: 1.2px; color: var(--muted); font-weight: 700;
+  }
+
+  /* The logic die is the one layer that is not DRAM, so it inverts. */
+  .stack-fig .stack-die.logic { background: #1a1a1a; border-color: #1a1a1a; }
+  .stack-fig .stack-die.logic .die-label { color: #ffffff; letter-spacing: 1.5px; }
+  .stack-fig .mc-row { display: grid; grid-template-columns: repeat(8, 1fr); gap: 7px; }
+  .stack-fig .mc-row .die-cell {
+    background: transparent; border-color: #ffffff; color: #ffffff;
+    font-size: 13.5px; padding: 8px 4px;
+  }
+  .stack-fig .band {
+    margin-top: 8px; text-align: center; padding: 10px; border-radius: 2px;
+    font-size: 14px; font-weight: 600;
+  }
+  .stack-fig .band.switch { background: #ffffff; color: #111111; border: 1px solid #ffffff; }
+  .stack-fig .band.phy    { background: transparent; color: #ffffff; border: 1px dashed #ffffff; }
+
+  .stack-fig .fpga {
+    border: 2px solid var(--rule); border-radius: 3px;
+    background: var(--bg); padding: 14px 16px;
+  }
+  .stack-fig .fpga .name { font-size: 15.5px; font-weight: 700; margin-bottom: 4px; }
+  .stack-fig .fpga .desc { font-size: 13px; color: var(--muted); }
+
+  @media (max-width: 760px) {
+    .stack-fig .mc-row { grid-template-columns: repeat(4, 1fr); }
+    .stack-fig .die-cell { font-size: 13px; }
+  }
+
   /* ── TABLET / PHONE ───────────────────────────────────────── */
   @media (max-width: 1180px) {
     #main { padding: 48px 32px 80px; }
@@ -325,6 +392,7 @@
 <!-- ═══ SIDEBAR ═══ -->
 <nav id="sidebar">
   <h2>目錄</h2>
+  <div class="lang-switch">中文 &middot; <a href="index_en.html">English</a></div>
   <div class="grp-head">HBM 物理架構</div>
   <ul>
     <li><a href="#s1">1. HBM 物理架構</a></li>
@@ -416,79 +484,69 @@
 
 <div class="diagram">
   <div class="diagram-title">HBM Stack 垂直結構（U50 Stack 0）</div>
-  <div style="font-size:13px;">
+  <div class="stack-fig">
 
-    <!-- DRAM Die 4 -->
-    <div class="hd-die">
-      <div class="hd-label muted">DRAM Die 4（最上層）</div>
-      <div class="hd-row">
-        <div class="hd-cell blue">Cell Array</div>
-        <div class="hd-cell green">Row Buffer (SA)</div>
+    <div class="stack-die">
+      <div class="die-label">DRAM Die 4（最上層）</div>
+      <div class="die-row">
+        <div class="die-cell cells">Cell Array</div>
+        <div class="die-cell sa">Row Buffer (SA)</div>
       </div>
     </div>
 
-    <div class="hd-connector" title="TSV 矽穿孔貫穿各層">↕ TSV</div>
+    <div class="tsv" title="TSV 矽穿孔貫穿各層"><span>&#8597; TSV</span></div>
 
-    <!-- DRAM Die 3 -->
-    <div class="hd-die">
-      <div class="hd-label muted">DRAM Die 3</div>
-      <div class="hd-row">
-        <div class="hd-cell blue">Cell Array</div>
-        <div class="hd-cell green">Row Buffer (SA)</div>
+    <div class="stack-die">
+      <div class="die-label">DRAM Die 3</div>
+      <div class="die-row">
+        <div class="die-cell cells">Cell Array</div>
+        <div class="die-cell sa">Row Buffer (SA)</div>
       </div>
     </div>
 
-    <div class="hd-connector">↕ TSV</div>
+    <div class="tsv"><span>&#8597; TSV</span></div>
 
-    <!-- DRAM Die 2 -->
-    <div class="hd-die">
-      <div class="hd-label muted">DRAM Die 2</div>
-      <div class="hd-row">
-        <div class="hd-cell blue">Cell Array</div>
-        <div class="hd-cell green">Row Buffer (SA)</div>
+    <div class="stack-die">
+      <div class="die-label">DRAM Die 2</div>
+      <div class="die-row">
+        <div class="die-cell cells">Cell Array</div>
+        <div class="die-cell sa">Row Buffer (SA)</div>
       </div>
     </div>
 
-    <div class="hd-connector">↕ TSV</div>
+    <div class="tsv"><span>&#8597; TSV</span></div>
 
-    <!-- DRAM Die 1 -->
-    <div class="hd-die">
-      <div class="hd-label muted">DRAM Die 1</div>
-      <div class="hd-row">
-        <div class="hd-cell blue">Cell Array</div>
-        <div class="hd-cell green">Row Buffer (SA)</div>
+    <div class="stack-die">
+      <div class="die-label">DRAM Die 1</div>
+      <div class="die-row">
+        <div class="die-cell cells">Cell Array</div>
+        <div class="die-cell sa">Row Buffer (SA)</div>
       </div>
     </div>
 
-    <div class="hd-connector">↕ TSV（矽穿孔）貫穿各層</div>
+    <div class="tsv"><span>&#8597; TSV（矽穿孔）貫穿各層</span></div>
 
-    <!-- Base Die -->
-    <div class="hd-die" style="border-color: var(--accent5); background: #f0f0f0;">
-      <div class="hd-label" style="color: var(--accent5);">Base Die（Logic Die）</div>
-      <div class="hd-row">
-        <div class="hd-cell orange">MC0</div>
-        <div class="hd-cell orange">MC1</div>
-        <div class="hd-cell orange">MC2</div>
-        <div class="hd-cell orange">MC3</div>
-        <div class="hd-cell orange">MC4</div>
-        <div class="hd-cell orange">MC5</div>
-        <div class="hd-cell orange">MC6</div>
-        <div class="hd-cell orange">MC7</div>
+    <div class="stack-die logic">
+      <div class="die-label">Base Die（Logic Die）</div>
+      <div class="mc-row">
+        <div class="die-cell">MC0</div>
+        <div class="die-cell">MC1</div>
+        <div class="die-cell">MC2</div>
+        <div class="die-cell">MC3</div>
+        <div class="die-cell">MC4</div>
+        <div class="die-cell">MC5</div>
+        <div class="die-cell">MC6</div>
+        <div class="die-cell">MC7</div>
       </div>
-      <div class="hd-cell purple" style="margin-top:6px; text-align:center; flex:none; display:block; padding:7px;">
-        HBM Switch (Crossbar) &nbsp;—&nbsp; 路由 + Reorder
-      </div>
-      <div class="hd-cell blue" style="margin-top:4px; text-align:center; flex:none; display:block; padding:7px;">
-        PHY（SerDes + IO）
-      </div>
+      <div class="band switch">HBM Switch (Crossbar) &nbsp;&mdash;&nbsp; 路由 + Reorder</div>
+      <div class="band phy">PHY（SerDes + IO）</div>
     </div>
 
-    <div class="hd-connector">↕ Interposer（矽中介層）</div>
+    <div class="tsv"><span>&#8597; Interposer（矽中介層）</span></div>
 
-    <!-- FPGA -->
-    <div class="hd-box accent" style="padding:12px 14px;">
-      <div class="hd-label" style="color:var(--accent); margin-bottom:4px;">Xilinx Alveo U50 FPGA</div>
-      <div style="color:var(--muted); font-size:12px;">你的 AXI Master（16 個 port）在這裡發請求</div>
+    <div class="fpga">
+      <div class="name">Xilinx Alveo U50 FPGA</div>
+      <div class="desc">你的 AXI Master（16 個 port）在這裡發請求</div>
     </div>
 
   </div>
